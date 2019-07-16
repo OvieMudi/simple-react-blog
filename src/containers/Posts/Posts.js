@@ -5,14 +5,12 @@ import './Posts.css';
 
 class Posts extends Component {
   state = {
-    posts: [],
-    postId: null,
-    error: false
+    posts: []
   };
 
   componentDidMount() {
     axios
-      .get('https://jsonplaceholder.typicode.com/posts/')
+      .get('/posts')
       .then(res => {
         let posts = res.data.slice(0, 4);
         this.setState({ posts });
@@ -32,9 +30,9 @@ class Posts extends Component {
       return (
         <Post
           key={post.id}
+          id={post.id}
           title={post.title}
           author={post.author}
-          clicked={() => this.selectedPostHandler(post.id)}
         />
       );
     });
