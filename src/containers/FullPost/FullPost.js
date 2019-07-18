@@ -9,27 +9,40 @@ class FullPost extends Component {
   };
 
   componentDidMount() {
-    const postId = this.props.match.params.id;
+    this.fetchData();
+  }
 
-    if (postId && this.state.post.id !== postId) {
-      axios
-        .get(`/posts/${postId}`)
-        .then(res => {
-          this.setState({ post: res.data });
-        })
-        .catch(err => {
-          console.log(err.message);
-        });
+  shouldComponentUpdate(nextProps) {
+    console.log(nextProps.match.params.id, 'versus', this.state.post.id);
+
+    return parseInt(nextProps.match.params.id, 10) !== this.state.post.id;
+  }
+
+  componentDidUpdate() {
+    const postId = parseInt(this.props.match.params.id, 10);
+
+    if (this.state.post.id && parseInt(postId, 10) !== this.state.post.id) {
+      this.fetchData();
     }
   }
 
-  render() {
-    let post = null;
-    if (this.props.match.params.id) {
-      if (!this.state.post.body) {
-        post = <p style={{ textAlign: 'center' }}>Loading...</p>;
-      }
+  fetchData = () => {
+    axios
+      .get(this.props.match.url)
+      .then(res => {
+        this.setState({ post: res.data });
+      })
+      .catch(err => {
+        console.log(err.message);
+      });
+  };
 
+  render() {
+    // console.log('[render in fullpost]', this.props.match.params);
+    let post = null;
+    if (!this.state.post.body) {
+      post = <p style={{ textAlign: 'center' }}>Loading...</p>;
+    } else {
       const postObject = this.state.post;
       post = (
         <div className="FullPost">
